@@ -56,7 +56,19 @@ window.onload = function() {
     ];
                       
 
-    var counters = {
+    var playercounters = {
+        earth: 0,
+        electrik:0,
+        fire: 0,
+        grass:0,
+        ice:0,
+        poison:0,
+        psychic:0,
+        water:0,
+        wind:0
+    }
+
+    var computercounters = {
         earth: 0,
         electrik:0,
         fire: 0,
@@ -90,6 +102,9 @@ window.onload = function() {
 
     // Show available moves
     var showmoves = false;
+
+    //current Player
+    var currentplayer = 'player';
     
     // The AI bot
     var aibot = false;
@@ -112,13 +127,24 @@ window.onload = function() {
 
     //display counters
     function displayCounters(){
-        var counterContainer = document.getElementById('counters');
-        counterContainer.innerHTML = "";
-        for (const [key, value] of Object.entries(counters)) {
-            counterContainer.appendChild(
+        var playercounterContainer = document.getElementById('player-counters');
+        var computercounterContainer = document.getElementById('computer-counters');
+        playercounterContainer.innerHTML = "";
+        computercounterContainer.innerHTML = "";
+        for (const [key, value] of Object.entries(playercounters)) {
+            playercounterContainer.appendChild(
                 Object.assign(
                     document.createElement('div'),
-                    {className: 'energy-icons '+key},
+                    {className: 'player-energy energy-icons '+key},
+                    {innerText: value}
+                )
+            )
+        }
+        for (const [key, value] of Object.entries(computercounters)) {
+            computercounterContainer.appendChild(
+                Object.assign(
+                    document.createElement('div'),
+                    {className: 'computer-energy energy-icons '+key},
                     {innerText: value}
                 )
             )
@@ -163,7 +189,6 @@ window.onload = function() {
     function update(tframe) {
         var dt = (tframe - lastframe) / 1000;
         lastframe = tframe;
-        
         if (gamestate == gamestates.ready) {
             // Game is ready for player input
             
@@ -174,7 +199,7 @@ window.onload = function() {
             }
             
             // Let the AI bot make a move, if enabled
-            if (aibot) {
+            if (currentplayer == 'computer') {
                 animationtime += dt;
                 if (animationtime > animationtimetotal) {
                     // Check if there are moves available
@@ -210,7 +235,7 @@ window.onload = function() {
                              //play sound on match
                              playSound(clusters[i].length);
                             // Add extra points for longer clusters
-                            sendColorsToPlayer(clusters[i].length,clusters[i].tilecolor);
+                            sendColorsToPlayer(clusters[i].length,clusters[i].tilecolor,currentplayer);
                             score += 100 * (clusters[i].length - 2);
                         }
                     
@@ -221,9 +246,10 @@ window.onload = function() {
                         animationstate = 1;
                     } else {
                         // No clusters found, animation complete
+                        swapplayer(); 
                         gamestate = gamestates.ready;
                     }
-                    animationtime = 0;
+                    animationtime = 0;            
                 }
             } else if (animationstate == 1) {
                 // Tiles need to be shifted
@@ -239,6 +265,7 @@ window.onload = function() {
                     findClusters();
                     if (clusters.length <= 0) {
                         // Animation complete
+                        swapplayer();
                         gamestate = gamestates.ready;
                     }
                 }
@@ -271,15 +298,23 @@ window.onload = function() {
                 if (animationtime > animationtimetotal) {
                     // Invalid swap, swap back
                     swap(currentmove.column1, currentmove.row1, currentmove.column2, currentmove.row2);
-                    
                     // Animation complete
                     gamestate = gamestates.ready;
                 }
             }
-            
+          
             // Update moves and clusters
             findMoves();
             findClusters();
+        }
+       
+    }
+
+    function swapplayer(){
+        if(currentplayer == 'computer'){
+            currentplayer = 'player';
+        } else {
+            currentplayer = 'computer';
         }
     }
     
@@ -915,9 +950,14 @@ window.onload = function() {
     }
 
 
-    function sendColorsToPlayer(nb, color){
+    function sendColorsToPlayer(nb, color,player){
         //TODO add Player option
-        counters[color] += nb;
+        if(player == 'player'){
+            playercounters[color] += nb;
+        } else {
+            computercounters[color] += nb;
+        }
+        
         displayCounters();
     }
 

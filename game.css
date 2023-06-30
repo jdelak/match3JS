@@ -2,6 +2,14 @@ canvas{
     margin-top: 24px;
 }
 
+.counters{
+    display:flex;
+}
+
+#player-counters, #computer-counters{
+    width:50%;
+}
+
 .energy-icons{
     display:inline-flex;
     height:32px;
@@ -33,6 +41,11 @@ canvas{
     height:32px;
     content:"";
     z-index:-1;
+}
+
+#computer-counters{
+    align-self: flex-end;
+    text-align: right;
 }
 
 .earth{
