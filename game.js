@@ -23,7 +23,6 @@ window.onload = function() {
     // Get the canvas and context
     var canvas = document.getElementById("viewport");
     var context = canvas.getContext("2d");
-    var context2 = canvas.getContext("2d");
     
     // Timing and frames per second
     var lastframe = 0;
@@ -44,17 +43,31 @@ window.onload = function() {
     };
     
     // All of the different tile colors in RGB
-    var tilecolors = [['#6699cc','water'],
-                      ['#cc3333','fire'],
-                      ['#ffcc33','electrik'],
-                      ['#66cc66','grass'],
-                      ['#9999cc','wind'],
-                      ['#cccc99','light'],
-                      ['#9966cc','poison'],
-                      ['#66cccc','ice'],
-                      ['#cc6633','earth'],
-                      ['#666666','darkness'],
-                      ['#ff6666','psychic']];
+    var tilecolors = [
+        ['#6699cc','water'],
+        ['#cc3333','fire'],
+        ['#ffcc33','electrik'],
+        ['#66cc66','grass'],
+        ['#9999cc','wind'],
+        ['#9966cc','poison'],
+        ['#66cccc','ice'],
+        ['#cc6633','earth'],
+        ['#ff6666','psychic']
+    ];
+                      
+
+    var counters = {
+        earth: 0,
+        electrik:0,
+        fire: 0,
+        grass:0,
+        ice:0,
+        poison:0,
+        psychic:0,
+        water:0,
+        wind:0
+    }
+        
     
     // Clusters and moves that were found
     var clusters = [];  // { column, row, length, horizontal }
@@ -75,8 +88,6 @@ window.onload = function() {
     var animationtime = 0;
     var animationtimetotal = 0.3;
 
-    let particles = [];
-    
     // Show available moves
     var showmoves = false;
     
@@ -90,6 +101,29 @@ window.onload = function() {
     var buttons = [ { x: 30, y: 240, width: 150, height: 50, text: "New Game"},
                     { x: 30, y: 300, width: 150, height: 50, text: "Show Moves"},
                     { x: 30, y: 360, width: 150, height: 50, text: "Enable AI Bot"}];
+
+    //particles variables
+    const particlesPerExplosion = 20;
+    const particlesMinSpeed     = 3;
+    const particlesMaxSpeed     = 6;
+    const particlesMinSize      = 1;
+    const particlesMaxSize      = 3;
+    const explosions            = [];
+
+    //display counters
+    function displayCounters(){
+        var counterContainer = document.getElementById('counters');
+        counterContainer.innerHTML = "";
+        for (const [key, value] of Object.entries(counters)) {
+            counterContainer.appendChild(
+                Object.assign(
+                    document.createElement('div'),
+                    {className: 'energy-icons '+key},
+                    {innerText: value}
+                )
+            )
+        }
+    }
     
     // Initialize the game
     function init() {
@@ -277,6 +311,8 @@ window.onload = function() {
         
         // Render tiles
         renderTiles();
+
+        // renderClusters();
         
         // Render moves, when there are no clusters
         if (showmoves && clusters.length <= 0 && gamestate == gamestates.ready) {
@@ -415,7 +451,7 @@ window.onload = function() {
         for (var i=0; i<clusters.length; i++) {
             // Calculate the tile coordinates
             var coord = getTileCoordinate(clusters[i].column, clusters[i].row, 0, 0);
-            
+
             if (clusters[i].horizontal) {
                 // Draw a horizontal line
                 context.fillStyle = "#00ff00";
@@ -880,63 +916,15 @@ window.onload = function() {
 
 
     function sendColorsToPlayer(nb, color){
-        console.log('Match : '+ nb +' '+ color);
+        //TODO add Player option
+        counters[color] += nb;
+        displayCounters();
     }
 
-    function explode(color,width,height) {
-      
-        /* Clears the given pixels in the rectangle */
-        context.clearRect(0, 0, width, height);
-        context.fillStyle = "white";
-        context.fillRect(0, 0, width, height);
-        particles.forEach((particle, i) => {
-                particle.color = color;
-                if (particle.alpha <= 0) {
-                    particles.splice(i, 1);
-                } else particle.update()
-            })
-              
-            /* Performs a animation after request*/
-        requestAnimationFrame(explode);
-    }
     
     // Call init to start the game
+    displayCounters()
     init();
 };
 
- /* Initialize particle object  */
- class Particle {
-    constructor(x, y, radius, dx, dy) {
-        this.x = x;
-        this.y = y;
-        this.radius = radius;
-        this.dx = dx;
-        this.dy = dy;
-        this.alpha = 1;
-        this.color = '#000000'
-    }
-    draw() {
-        ctx.save();
-        ctx.globalAlpha = this.alpha;
-        ctx.fillStyle = this.color;
-          
-        /* Begins or reset the path for 
-           the arc created */
-        ctx.beginPath();
-          
-        /* Some curve is created*/
-        ctx.arc(this.x, this.y, this.radius, 
-                0, Math.PI * 2, false);
-  
-        ctx.fill();
-          
-        /* Restore the recent canvas context*/
-        ctx.restore();
-    }
-    update() {
-        this.draw();
-        this.alpha -= 0.01;
-        this.x += this.dx;
-        this.y += this.dy;
-    }
-}
+ 

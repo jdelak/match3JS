@@ -1,0 +1,108 @@
+canvas{
+    margin-top: 24px;
+}
+
+.energy-icons{
+    display:inline-flex;
+    height:32px;
+    width:64px;
+    background: rgba(255, 255, 255, 0.15);
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    margin-right:10px;
+    position:relative;
+    justify-content: flex-end;
+    align-items: center;
+    padding-right:10px;
+    margin-bottom:0;
+    background-position: 6px 6px;
+    background-size: 20px 20px;
+    background-repeat: no-repeat;
+    font-weight: bold;
+}
+
+.energy-icons::before{
+    position:absolute;
+    top:0;
+    left:0;
+    border-radius: 50%;
+    display:inline-block;
+    width:32px;
+    height:32px;
+    content:"";
+    z-index:-1;
+}
+
+.earth{
+    background-image: url(earth.svg);
+}
+
+.earth::before{
+    background-color: #cc6633;
+}
+
+.electrik{
+    background-image: url(electrik.svg);
+}
+
+.electrik::before{
+    background-color: #ffcc33;
+}
+
+.fire{
+    background-image: url(fire.svg);
+}
+
+.fire::before{
+    background-color: #cc3333;
+}
+
+.grass{
+    background-image: url(grass.svg);
+}
+
+.grass::before{
+    background-color: #66cc66;
+}
+
+.ice{
+    background-image: url(ice.svg);
+}
+
+.ice::before{
+    background-color: #66cccc;
+}
+
+.poison{
+    background-image: url(poison.svg);
+}
+
+.poison::before{
+    background-color: #9966cc;
+}
+
+.psychic{
+    background-image: url(psychic.svg);
+}
+
+.psychic::before{
+    background-color: #ff6666;
+}
+
+.water{
+    background-image: url(water.svg);
+}
+
+.water::before{
+    background-color: #6699cc;
+}
+
+.wind{
+    background-image: url(wind.svg);
+}
+
+.wind::before{
+    background-color: #9999cc;
+}
